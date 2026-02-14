@@ -16,7 +16,7 @@ const state = {
   currentYear: new Date().getFullYear()
 }
 
-const STORAGE_KEY = 'retirementCalcData_v2'
+const STORAGE_KEY = 'retirementCalcData_v3'
 
 // =================================
 // LocalStorage Functions
@@ -24,9 +24,8 @@ const STORAGE_KEY = 'retirementCalcData_v2'
 function saveToLocalStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-    console.log('✅ บันทึกข้อมูลสำเร็จ')
   } catch (error) {
-    console.error('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล:', error)
+    console.error('Error saving data:', error)
   }
 }
 
@@ -37,12 +36,11 @@ function loadFromLocalStorage() {
       const parsedData = JSON.parse(savedData)
       Object.assign(state, parsedData)
       state.currentYear = new Date().getFullYear()
-      console.log('✅ โหลดข้อมูลสำเร็จ')
       return true
     }
     return false
   } catch (error) {
-    console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูล:', error)
+    console.error('Error loading data:', error)
     return false
   }
 }
@@ -50,9 +48,8 @@ function loadFromLocalStorage() {
 function clearLocalStorage() {
   try {
     localStorage.removeItem(STORAGE_KEY)
-    console.log('✅ เคลียร์ข้อมูลสำเร็จ')
   } catch (error) {
-    console.error('❌ เกิดข้อผิดพลาดในการเคลียร์ข้อมูล:', error)
+    console.error('Error clearing data:', error)
   }
 }
 
@@ -73,7 +70,7 @@ function calculateRetirement() {
     state.currentSalary * Math.pow(1 + salaryIncreaseDecimal, yearsUntilRetirement)
   )
 
-  // คำนวณโบนัสแต่ละปี
+  // Calculate bonus by year
   const bonusByYear = []
   let previousYearSalary = state.currentSalary
   let currentYearSalary = state.currentSalary
@@ -96,7 +93,7 @@ function calculateRetirement() {
     currentYearSalary *= (1 + salaryIncreaseDecimal)
   }
 
-  // คำนวณกองทุนสำรองเลี้ยงชีพ
+  // Calculate provident fund
   let futureProvidentFund = 0
   let currentSalaryForPF = state.currentSalary
 
@@ -111,7 +108,7 @@ function calculateRetirement() {
   const existingFundAtRetirement = state.existingProvidentFund
   const totalProvidentFund = existingFundAtRetirement + futureProvidentFund
 
-  // คำนวณเงินเกษียณอายุ
+  // Calculate retirement benefit
   const retirement1 = (salaryAt60 * 400) / 30
   const retirement2 = (salaryAt60 * totalWorkYears) / 2
   const retirementBenefit = Math.max(retirement1, retirement2)
@@ -144,27 +141,20 @@ function formatNumber(num) {
 function renderBasicInfo(data) {
   const container = document.getElementById('basicInfoGrid')
   const infoCards = [
-    { label: 'ทำงานมาแล้ว', value: data.yearsWorked, unit: 'ปี', color: 'blue' },
-    { label: 'เหลือจนเกษียณ', value: data.yearsUntilRetirement, unit: 'ปี', color: 'orange' },
-    { label: 'รวมอายุงาน', value: data.totalWorkYears, unit: 'ปี', color: 'emerald' },
-    { label: 'เงินเดือนตอนเกษียณ', value: formatNumber(data.salaryAt60), unit: 'บาท', color: 'purple' }
+    { label: 'ทำงานมาแล้ว', value: data.yearsWorked, unit: 'ปี', gradient: 'from-cyan-500 to-blue-500' },
+    { label: 'เหลือถึงเกษียณ', value: data.yearsUntilRetirement, unit: 'ปี', gradient: 'from-violet-500 to-fuchsia-500' },
+    { label: 'รวมอายุงาน', value: data.totalWorkYears, unit: 'ปี', gradient: 'from-emerald-500 to-teal-500' },
+    { label: 'เงินเดือนตอนเกษียณ', value: formatNumber(data.salaryAt60), unit: 'บาท', gradient: 'from-amber-500 to-orange-500' }
   ]
 
   container.innerHTML = infoCards.map(card => `
-    <div class="group p-5 rounded-2xl bg-gradient-to-br ${
-      card.color === 'blue' ? 'from-blue-50 to-indigo-50 border-blue-100' :
-      card.color === 'orange' ? 'from-orange-50 to-amber-50 border-orange-100' :
-      card.color === 'emerald' ? 'from-emerald-50 to-teal-50 border-emerald-100' :
-      'from-purple-50 to-pink-50 border-purple-100'
-    } border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-      <p class="text-xs font-semibold uppercase tracking-wider ${
-        card.color === 'blue' ? 'text-blue-600' :
-        card.color === 'orange' ? 'text-orange-600' :
-        card.color === 'emerald' ? 'text-emerald-600' :
-        'text-purple-600'
-      } mb-2">${card.label}</p>
-      <p class="text-2xl md:text-3xl font-extrabold text-slate-800">${card.value}</p>
-      <p class="text-sm text-slate-500 mt-1">${card.unit}</p>
+    <div class="relative group">
+      <div class="absolute -inset-0.5 bg-gradient-to-r ${card.gradient} rounded-xl opacity-0 group-hover:opacity-30 transition duration-500 blur"></div>
+      <div class="relative bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-4 hover:bg-slate-800 transition-all duration-300">
+        <p class="text-xs font-medium text-slate-400 mb-1">${card.label}</p>
+        <p class="text-xl md:text-2xl font-bold text-white">${card.value}</p>
+        <p class="text-xs text-slate-500 mt-0.5">${card.unit}</p>
+      </div>
     </div>
   `).join('')
 }
@@ -176,42 +166,45 @@ function renderStatsCards(data) {
       title: 'เงินกองทุนเดิม',
       value: formatNumber(data.existingFundAtRetirement),
       subtitle: 'รวมดอกเบี้ยแล้ว',
-      gradient: 'from-indigo-500 to-primary-600',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V5z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><path d="M16 11h0"/></svg>`
+      gradient: 'from-indigo-500 to-violet-600',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V5z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><path d="M16 11h0"/></svg>`
     },
     {
       title: 'เงินกองทุนใหม่',
       value: formatNumber(data.futureProvidentFund),
-      subtitle: `${state.providentFundRate}% + ${state.providentFundRate}% + ผลตอบแทน ${state.fundReturnRate}%`,
-      gradient: 'from-violet-500 to-purple-600',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`
+      subtitle: `${state.providentFundRate}% + ${state.providentFundRate}% + ${state.fundReturnRate}%`,
+      gradient: 'from-fuchsia-500 to-pink-600',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`
     },
     {
       title: 'เงินเกษียณอายุ',
       value: formatNumber(data.retirementBenefit),
       subtitle: data.retirement2 > data.retirement1 ? 'ใช้สูตรที่ 2' : 'ใช้สูตรที่ 1',
       gradient: 'from-rose-500 to-red-600',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`
     },
     {
       title: 'รวมเงินทั้งหมด',
       value: formatNumber(data.totalMoney),
-      subtitle: 'เกษียณอายุ + กองทุนรวม',
+      subtitle: 'เกษียณ + กองทุน',
       gradient: 'from-emerald-500 to-green-600',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
     }
   ]
 
   container.innerHTML = stats.map(stat => `
-    <div class="group p-5 rounded-2xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg shadow-${stat.gradient.split('-')[1]}-500/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div class="flex justify-between items-start mb-3">
-        <div>
-          <p class="text-sm font-medium opacity-90">${stat.title}</p>
-          <p class="text-xl md:text-2xl font-bold mt-1">${stat.value} ฿</p>
+    <div class="relative group">
+      <div class="absolute -inset-0.5 bg-gradient-to-r ${stat.gradient} rounded-xl opacity-50 group-hover:opacity-70 transition duration-500 blur"></div>
+      <div class="relative p-5 rounded-xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-xs font-medium opacity-80 mb-1">${stat.title}</p>
+            <p class="text-lg md:text-xl font-bold">${stat.value} ฿</p>
+          </div>
+          <div class="opacity-60">${stat.icon}</div>
         </div>
-        <div class="opacity-80">${stat.icon}</div>
+        <p class="text-xs opacity-70">${stat.subtitle}</p>
       </div>
-      <p class="text-xs opacity-70">${stat.subtitle}</p>
     </div>
   `).join('')
 }
@@ -219,28 +212,28 @@ function renderStatsCards(data) {
 function renderBonusList(data) {
   const container = document.getElementById('bonusList')
   if (data.bonusByYear.length === 0) {
-    container.innerHTML = '<p class="text-center text-slate-400 py-8">ไม่มีข้อมูลโบนัส</p>'
+    container.innerHTML = '<p class="text-center text-slate-500 py-8">ไม่มีข้อมูลโบนัส</p>'
     return
   }
 
   container.innerHTML = data.bonusByYear.map(item => `
-    <div class="group flex items-center justify-between p-4 rounded-xl ${
+    <div class="group flex items-center justify-between p-3 rounded-lg ${
       item.isRetirementYear 
-        ? 'bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-300 shadow-md' 
-        : 'bg-slate-50 hover:bg-slate-100 border border-slate-100'
-    } transition-all duration-200 hover:translate-x-1">
-      <div class="flex-1">
+        ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30' 
+        : 'bg-slate-800/30 hover:bg-slate-800/60 border border-slate-700/30'
+    } transition-all duration-300">
+      <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2">
-          <span class="font-semibold text-slate-800">ปี ${item.year}</span>
+          <span class="text-sm font-medium text-white">ปี ${item.year}</span>
           ${item.isRetirementYear 
-            ? '<span class="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full">🎉 ปีเกษียณ</span>' 
+            ? '<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">เกษียณ</span>' 
             : ''}
         </div>
-        <p class="text-sm text-slate-500 mt-1">เงินเดือน ${formatNumber(item.salary)} ฿ (ฐาน: ${formatNumber(item.baseSalary)} ฿)</p>
+        <p class="text-xs text-slate-400 mt-0.5 truncate">เงินเดือน ${formatNumber(item.salary)} ฿</p>
       </div>
       <div class="text-right">
-        <p class="font-bold ${item.isRetirementYear ? 'text-amber-700' : 'text-emerald-600'}">${formatNumber(item.bonus)} ฿</p>
-        <p class="text-xs text-slate-400">${state.bonusRate} เท่า</p>
+        <p class="text-sm font-semibold ${item.isRetirementYear ? 'text-amber-400' : 'text-emerald-400'}">${formatNumber(item.bonus)} ฿</p>
+        <p class="text-xs text-slate-500">${state.bonusRate} เท่า</p>
       </div>
     </div>
   `).join('')
@@ -263,20 +256,18 @@ function renderRetirementFormulas(data) {
       selected: formula2Selected
     }
   ].map(formula => `
-    <div class="p-5 rounded-xl ${
+    <div class="p-4 rounded-xl ${
       formula.selected 
-        ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-400 shadow-md' 
-        : 'bg-slate-50 border-2 border-transparent hover:border-slate-200'
-    } transition-all duration-200">
-      <p class="font-semibold ${formula.selected ? 'text-emerald-800' : 'text-slate-700'} mb-2 flex items-center gap-2">
-        ${formula.title}
-        ${formula.selected ? '<span class="text-lg">⭐</span>' : ''}
-      </p>
-      <p class="text-sm font-mono ${formula.selected ? 'text-emerald-700' : 'text-slate-600'} mb-2">
-        ${formula.calculation}
-      </p>
+        ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30' 
+        : 'bg-slate-800/30 border border-slate-700/30'
+    } transition-all duration-300">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-sm font-medium ${formula.selected ? 'text-emerald-400' : 'text-slate-300'}">${formula.title}</p>
+        ${formula.selected ? '<span class="text-emerald-400">✓</span>' : ''}
+      </div>
+      <p class="text-sm font-mono text-slate-400">${formula.calculation}</p>
       ${formula.selected 
-        ? '<p class="text-sm text-emerald-600 font-medium flex items-center gap-1">✅ ใช้สูตรนี้เพราะให้ผลมากกว่า</p>' 
+        ? '<p class="text-xs text-emerald-400 mt-2">ใช้สูตรนี้ (ให้ผลมากกว่า)</p>' 
         : ''}
     </div>
   `).join('')
@@ -287,19 +278,25 @@ function renderSummary(data) {
   
   const detailsContainer = document.getElementById('summaryDetails')
   detailsContainer.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto">
-      <div class="p-4 bg-white/60 rounded-xl">
-        <p class="text-sm text-slate-500 mb-1">เงินเกษียณอายุ</p>
-        <p class="text-xl font-bold text-rose-600">${formatNumber(data.retirementBenefit)} ฿</p>
-      </div>
-      <div class="p-4 bg-white/60 rounded-xl">
-        <p class="text-sm text-slate-500 mb-1">เงินกองทุนรวม</p>
-        <p class="text-xl font-bold text-primary-600">${formatNumber(data.totalProvidentFund)} ฿</p>
-      </div>
+    <div class="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-xl p-4">
+      <p class="text-sm text-slate-400 mb-1">เงินเกษียณอายุ</p>
+      <p class="text-xl font-bold text-rose-400">${formatNumber(data.retirementBenefit)} ฿</p>
     </div>
-    <div class="mt-4 text-sm text-slate-500 space-y-1">
-      <p>เงินกองทุนเดิม: ${formatNumber(data.existingFundAtRetirement)} ฿</p>
-      <p>เงินกองทุนใหม่: ${formatNumber(data.futureProvidentFund)} ฿</p>
+    <div class="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-xl p-4">
+      <p class="text-sm text-slate-400 mb-1">เงินกองทุนรวม</p>
+      <p class="text-xl font-bold text-violet-400">${formatNumber(data.totalProvidentFund)} ฿</p>
+    </div>
+    <div class="bg-slate-800/30 border border-slate-700/30 rounded-xl p-4 md:col-span-2">
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <span class="text-slate-500">กองทุนเดิม:</span>
+          <span class="text-slate-300 ml-1">${formatNumber(data.existingFundAtRetirement)} ฿</span>
+        </div>
+        <div>
+          <span class="text-slate-500">กองทุนใหม่:</span>
+          <span class="text-slate-300 ml-1">${formatNumber(data.futureProvidentFund)} ฿</span>
+        </div>
+      </div>
     </div>
   `
 }
@@ -348,17 +345,17 @@ function handleCalculate() {
   updateStateFromInputs()
 
   if (state.workStartYear === 0 || state.currentAge === 0 || state.currentSalary === 0) {
-    alert('⚠️ กรุณากรอกข้อมูลที่จำเป็น: ปีเริ่มงาน, อายุปัจจุบัน, และเงินเดือน')
+    alert('กรุณากรอกข้อมูลที่จำเป็น: ปีเริ่มงาน, อายุปัจจุบัน, และเงินเดือน')
     return
   }
 
   if (state.workStartYear > state.currentYear) {
-    alert('⚠️ ปีเริ่มงานต้องไม่มากกว่าปีปัจจุบัน')
+    alert('ปีเริ่มงานต้องไม่มากกว่าปีปัจจุบัน')
     return
   }
 
   if (state.currentAge >= state.retirementAge) {
-    alert('⚠️ อายุปัจจุบันต้องน้อยกว่าอายุเกษียณ (60 ปี)')
+    alert('อายุปัจจุบันต้องน้อยกว่าอายุเกษียณ (60 ปี)')
     return
   }
 
@@ -414,14 +411,8 @@ function confirmClear() {
 // Auto-save
 function setupAutoSave() {
   const inputs = [
-    'workStartYear',
-    'currentAge',
-    'currentSalary',
-    'bonusRate',
-    'salaryIncreaseRate',
-    'providentFundRate',
-    'fundReturnRate',
-    'existingProvidentFund'
+    'workStartYear', 'currentAge', 'currentSalary', 'bonusRate',
+    'salaryIncreaseRate', 'providentFundRate', 'fundReturnRate', 'existingProvidentFund'
   ]
 
   inputs.forEach(id => {
@@ -436,19 +427,13 @@ function setupAutoSave() {
 // Initialization
 // =================================
 function init() {
-  console.log('🚀 Initializing Retirement Calculator...')
-  console.log('📅 ปีปัจจุบัน:', state.currentYear)
-
   const hasData = loadFromLocalStorage()
 
   if (hasData) {
-    console.log('📦 พบข้อมูลที่บันทึกไว้')
     loadStateToInputs()
     if (state.workStartYear > 0 && state.currentAge > 0 && state.currentSalary > 0) {
       updateUI()
     }
-  } else {
-    console.log('📝 ไม่พบข้อมูลที่บันทึกไว้')
   }
 
   // Event Listeners
@@ -465,8 +450,6 @@ function init() {
       hideModal()
     }
   })
-
-  console.log('✅ Initialization complete!')
 }
 
 // Start the app
