@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="description" content="เครื่องคำนวณวางแผนการเงินเกษียณอายุ - คำนวณเงินเกษียณ กองทุนสำรองเลี้ยงชีพ และโบนัส">
+  
+  <title>แผนการเงินเกษียณอายุ | Retirement Calculator</title>
+  
+  <!-- Google Fonts - Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 font-sans antialiased">
+  
+  <!-- Background Decorations -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-300/30 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/2 -left-40 w-96 h-96 bg-secondary-300/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 right-1/4 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <div id="app" class="relative z-10">
+    
+    <!-- Header -->
+    <header class="pt-8 pb-6 px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="relative bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-8 md:p-12 overflow-hidden">
+          <!-- Top Accent Line -->
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-400 via-primary-500 to-secondary-500"></div>
+          
+          <div class="flex flex-col items-center text-center">
+            <!-- Icon -->
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-6 animate-pulse-soft">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                <rect width="16" height="20" x="4" y="2" rx="2"/>
+                <line x1="8" x2="16" y1="6" y2="6"/>
+                <line x1="16" x2="16" y1="14" y2="14"/>
+                <path d="M8 14h.01"/>
+                <path d="M8 18h.01"/>
+                <path d="M12 18h.01"/>
+                <path d="M12 14h.01"/>
+                <path d="M16 18h.01"/>
+                <path d="M16 14h.01"/>
+              </svg>
+            </div>
+            
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
+              แผนการเงิน<span class="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">เกษียณอายุ</span>
+            </h1>
+            <p class="text-lg text-slate-500 font-medium">คำนวณและวิเคราะห์การเงินส่วนบุคคลอย่างมืออาชีพ</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="px-4 pb-12">
+      <div class="max-w-6xl mx-auto space-y-6">
+        
+        <!-- Input Section -->
+        <section class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/60 p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+            <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-600">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800">ตั้งค่าข้อมูล</h2>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Work Start Year -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">ปีเริ่มงาน (ค.ศ.)</label>
+              <input type="number" id="workStartYear" placeholder="2010" min="1950" max="2100"
+                class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+            </div>
+
+            <!-- Current Age -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">อายุ (ปีปัจจุบัน)</label>
+              <div class="relative">
+                <input type="number" id="currentAge" placeholder="35" min="18" max="60"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">ปี</span>
+              </div>
+            </div>
+
+            <!-- Current Salary -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">เงินเดือนปัจจุบัน</label>
+              <div class="relative">
+                <input type="number" id="currentSalary" placeholder="30000" min="0"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">฿</span>
+              </div>
+            </div>
+
+            <!-- Bonus Rate -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">อัตราโบนัส</label>
+              <div class="relative">
+                <input type="number" id="bonusRate" placeholder="3" min="0" step="0.1"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">เท่า</span>
+              </div>
+            </div>
+
+            <!-- Salary Increase Rate -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">อัตราขึ้นเงินเดือน/ปี</label>
+              <div class="relative">
+                <input type="number" id="salaryIncreaseRate" placeholder="5" min="0" step="0.1"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">%</span>
+              </div>
+            </div>
+
+            <!-- Provident Fund Rate -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">หักกองทุนฯ (พนักงาน)</label>
+              <div class="relative">
+                <input type="number" id="providentFundRate" placeholder="5" min="0" max="15" step="0.1"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">%</span>
+              </div>
+            </div>
+
+            <!-- Fund Return Rate -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">ผลตอบแทนกองทุน/ปี</label>
+              <div class="relative">
+                <input type="number" id="fundReturnRate" placeholder="1" min="0" step="0.1" value="1"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">%</span>
+              </div>
+            </div>
+
+            <!-- Existing Provident Fund -->
+            <div class="input-group">
+              <label class="block text-sm font-semibold text-slate-600 mb-2">เงินกองทุนสะสมปัจจุบัน</label>
+              <div class="relative">
+                <input type="number" id="existingProvidentFund" placeholder="100000" min="0"
+                  class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:bg-white focus:outline-none transition-all duration-200">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">฿</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex flex-wrap justify-center gap-4 mt-8">
+            <button id="calculateBtn" class="group relative px-8 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="16" height="20" x="4" y="2" rx="2"/>
+                <line x1="8" x2="16" y1="6" y2="6"/>
+                <line x1="16" x2="16" y1="14" y2="14"/>
+                <path d="M8 14h.01"/>
+                <path d="M8 18h.01"/>
+                <path d="M12 18h.01"/>
+                <path d="M12 14h.01"/>
+                <path d="M16 18h.01"/>
+                <path d="M16 14h.01"/>
+              </svg>
+              คำนวณใหม่
+            </button>
+            <button id="clearBtn" class="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-slate-300 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+              เคลียร์ข้อมูล
+            </button>
+          </div>
+        </section>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="hidden space-y-6">
+          
+          <!-- Basic Info Cards -->
+          <section class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/60 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+              <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
+                  <path d="M8 2v4"/>
+                  <path d="M16 2v4"/>
+                  <rect width="18" height="18" x="3" y="4" rx="2"/>
+                  <path d="M3 10h18"/>
+                </svg>
+              </div>
+              <h2 class="text-xl md:text-2xl font-bold text-slate-800">ข้อมูลพื้นฐาน</h2>
+            </div>
+            <div id="basicInfoGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+          </section>
+
+          <!-- Stats Cards -->
+          <section>
+            <div class="flex items-center gap-3 mb-4 md:hidden">
+              <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-600">
+                  <rect width="20" height="14" x="2" y="5" rx="2"/>
+                  <line x1="2" x2="22" y1="10" y2="10"/>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold text-slate-800">สรุปการเงิน</h2>
+            </div>
+            <div id="statsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-5"></div>
+          </section>
+
+          <!-- Details Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Bonus List -->
+            <section class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/60 p-6 md:p-8">
+              <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
+                    <circle cx="12" cy="8" r="6"/>
+                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                  </svg>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">โบนัสแต่ละปี</h2>
+              </div>
+              <div id="bonusList" class="max-h-96 overflow-y-auto pr-2 space-y-2"></div>
+            </section>
+
+            <!-- Retirement Formulas -->
+            <section class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/60 p-6 md:p-8">
+              <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-600">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                  </svg>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">สูตรเกษียณอายุ</h2>
+              </div>
+              <div id="formulasList" class="space-y-4"></div>
+            </section>
+          </div>
+
+          <!-- Summary Section -->
+          <section id="summarySection" class="relative bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-3xl shadow-xl border-2 border-amber-200/50 p-8 md:p-12 overflow-hidden">
+            <!-- Top Accent -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500"></div>
+            
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-amber-300/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-rose-300/20 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 text-center">
+              <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-float">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                  <line x1="12" x2="12" y1="2" y2="22"/>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">รวมเงินทั้งหมดที่จะได้รับ</h2>
+              <p id="summaryValue" class="text-4xl md:text-6xl font-black bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 bg-clip-text text-transparent mb-6"></p>
+              <div id="summaryDetails" class="space-y-2 text-slate-600"></div>
+              <p class="mt-6 text-sm text-slate-400 italic">* ไม่รวมโบนัสเพราะเป็นรายได้ระหว่างทำงาน</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/60 p-12 md:p-16 text-center">
+          <div class="w-24 h-24 mx-auto mb-6 text-slate-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-3">ยังไม่มีข้อมูล</h3>
+          <p class="text-lg text-slate-500">กรอกข้อมูลด้านบนและกดปุ่ม "คำนวณใหม่" เพื่อเริ่มต้น</p>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-4 pb-8">
+      <div class="max-w-6xl mx-auto text-center">
+        <p class="text-sm text-slate-400">
+          การคำนวณนี้เป็นการประมาณการ อาจมีการเปลี่ยนแปลงตามนโยบายของหน่วยงาน
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-2xl flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" x2="12" y1="8" y2="12"/>
+            <line x1="12" x2="12.01" y1="16" y2="16"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการเคลียร์ข้อมูล</h3>
+        <p class="text-slate-500 mb-6">คุณต้องการลบข้อมูลทั้งหมดใช่หรือไม่?</p>
+        <div class="flex gap-3 justify-center">
+          <button id="confirmYes" class="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-rose-500/30 transform hover:-translate-y-0.5 transition-all duration-200">
+            ยืนยัน
+          </button>
+          <button id="confirmNo" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-slate-300 transform hover:-translate-y-0.5 transition-all duration-200">
+            ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
