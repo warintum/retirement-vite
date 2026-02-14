@@ -229,7 +229,7 @@ function renderBonusList(data) {
             ? '<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">เกษียณ</span>' 
             : ''}
         </div>
-        <p class="text-xs text-slate-400 mt-0.5 truncate">เงินเดือน ${formatNumber(item.salary)} ฿</p>
+        <p class="text-xs text-slate-400 mt-0.5 truncate">เงินเดือน ${formatNumber(item.salary)} ฿ (ฐาน: ${formatNumber(item.baseSalary)} ฿)</p>
       </div>
       <div class="text-right">
         <p class="text-sm font-semibold ${item.isRetirementYear ? 'text-amber-400' : 'text-emerald-400'}">${formatNumber(item.bonus)} ฿</p>
