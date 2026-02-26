@@ -67,7 +67,7 @@ function calculateRetirement() {
   const totalWorkYears = yearsWorked + yearsUntilRetirement
   
   // ปีที่เกษียณ (ค.ศ.) และ เดือนที่เกษียณ (เดือนเกิด)
-  const retirementYear = birthYearAD + state.retirementAge
+  const retirementYear = birthYearAD + state.retirementAge + 543
   const retirementMonth = state.birthMonth
 
   const salaryIncreaseDecimal = state.salaryIncreaseRate / 100
@@ -167,7 +167,7 @@ function renderBasicInfo(data) {
     { label: 'เหลือถึงเกษียณ', value: data.yearsUntilRetirement, unit: 'ปี', gradient: 'from-violet-500 to-fuchsia-500' },
     { label: 'รวมอายุงาน', value: data.totalWorkYears, unit: 'ปี', gradient: 'from-emerald-500 to-teal-500' },
     { label: 'เงินเดือนตอนเกษียณ', value: formatNumber(data.salaryAt60), unit: 'บาท', gradient: 'from-amber-500 to-orange-500' },
-    { label: 'เกษียณเดือน', value: monthNames[data.retirementMonth - 1], unit: data.retirementYear, gradient: 'from-rose-500 to-pink-500' }
+    { label: 'เกษียณเดือน', value: monthNames[data.retirementMonth - 1], unit: 'พ.ศ. ' + data.retirementYear, gradient: 'from-rose-500 to-pink-500' }
   ]
 
   container.innerHTML = infoCards.map(card => `
