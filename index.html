@@ -98,19 +98,36 @@
               <div class="input-group">
                 <label class="block text-sm font-medium text-slate-400 mb-2">ปีเริ่มงาน</label>
                 <div class="relative">
-                  <input type="number" id="workStartYear" placeholder="2010" min="1950" max="2100"
+                  <input type="number" id="workStartYear" placeholder="2553" min="2493" max="2643"
                     class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:bg-slate-800 focus:outline-none transition-all duration-300">
-                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">ค.ศ.</span>
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">พ.ศ.</span>
                 </div>
               </div>
 
-              <!-- Current Age -->
+              <!-- Birth Year & Month -->
               <div class="input-group">
-                <label class="block text-sm font-medium text-slate-400 mb-2">อายุปัจจุบัน</label>
-                <div class="relative">
-                  <input type="number" id="currentAge" placeholder="35" min="18" max="60"
-                    class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:bg-slate-800 focus:outline-none transition-all duration-300">
-                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">ปี</span>
+                <label class="block text-sm font-medium text-slate-400 mb-2">วันเดือน ปี พ.ศ. เกิด</label>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <input type="number" id="birthYear" placeholder="2530" min="2460" max="2560"
+                      class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:bg-slate-800 focus:outline-none transition-all duration-300">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">พ.ศ.</span>
+                  </div>
+                  <select id="birthMonth" 
+                    class="w-24 px-3 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:border-violet-500 focus:bg-slate-800 focus:outline-none transition-all duration-300 text-sm">
+                    <option value="1">ม.ค.</option>
+                    <option value="2">ก.พ.</option>
+                    <option value="3">มี.ค.</option>
+                    <option value="4">เม.ย.</option>
+                    <option value="5">พ.ค.</option>
+                    <option value="6">มิ.ย.</option>
+                    <option value="7">ก.ค.</option>
+                    <option value="8">ส.ค.</option>
+                    <option value="9">ก.ย.</option>
+                    <option value="10">ต.ค.</option>
+                    <option value="11">พ.ย.</option>
+                    <option value="12">ธ.ค.</option>
+                  </select>
                 </div>
               </div>
 
@@ -208,7 +225,7 @@
               </div>
               <h2 class="text-lg font-semibold text-white">สรุปข้อมูลพื้นฐาน</h2>
             </div>
-            <div id="basicInfoGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+            <div id="basicInfoGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"></div>
           </section>
 
           <!-- Stats Cards -->

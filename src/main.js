@@ -9,11 +9,12 @@ const state = {
   bonusRate: 0,
   salaryIncreaseRate: 0,
   providentFundRate: 0,
-  currentAge: 0,
+  birthYear: 0,    // ปี พ.ศ. เกิด
+  birthMonth: 1,   // เดือนเกิด (1-12)
   existingProvidentFund: 0,
   fundReturnRate: 1,
   retirementAge: 60,
-  currentYear: new Date().getFullYear()
+  currentYear: new Date().getFullYear()  // ปี ค.ศ. ปัจจุบัน
 }
 
 const STORAGE_KEY = 'retirementCalcData_v3'
@@ -57,9 +58,17 @@ function clearLocalStorage() {
 // Calculation Engine
 // =================================
 function calculateRetirement() {
-  const yearsWorked = state.currentYear - state.workStartYear
-  const yearsUntilRetirement = state.retirementAge - state.currentAge
+  // แปลงปี พ.ศ. เป็น ค.ศ. แล้วคำนวณ
+  const birthYearAD = state.birthYear - 543
+  const workStartYearAD = state.workStartYear - 543
+  const currentAge = state.currentYear - birthYearAD
+  const yearsWorked = state.currentYear - workStartYearAD
+  const yearsUntilRetirement = state.retirementAge - currentAge
   const totalWorkYears = yearsWorked + yearsUntilRetirement
+  
+  // ปีที่เกษียณ (ค.ศ.) และ เดือนที่เกษียณ (เดือนเกิด)
+  const retirementYear = birthYearAD + state.retirementAge
+  const retirementMonth = state.birthMonth
 
   const salaryIncreaseDecimal = state.salaryIncreaseRate / 100
   const providentFundDecimal = state.providentFundRate / 100
@@ -98,7 +107,15 @@ function calculateRetirement() {
   let currentSalaryForPF = state.currentSalary
 
   for (let year = 0; year < yearsUntilRetirement; year++) {
-    const yearlyContribution = currentSalaryForPF * 12 * totalProvidentFundRate
+    const isRetirementYear = year === yearsUntilRetirement - 1
+    let monthsInYear = 12
+    
+    // ปีสุดท้ายก่อนเกษียณ คิดเฉพาะเดือนจนถึงเดือนเกษียณ
+    if (isRetirementYear) {
+      monthsInYear = retirementMonth
+    }
+    
+    const yearlyContribution = currentSalaryForPF * monthsInYear * totalProvidentFundRate
     const yearsRemaining = yearsUntilRetirement - year
     const futureValue = yearlyContribution * Math.pow(1 + fundReturnRateDecimal, yearsRemaining)
     futureProvidentFund += futureValue
@@ -127,7 +144,10 @@ function calculateRetirement() {
     retirement1,
     retirement2,
     retirementBenefit,
-    totalMoney
+    totalMoney,
+    currentAge,
+    retirementYear,
+    retirementMonth
   }
 }
 
@@ -140,11 +160,14 @@ function formatNumber(num) {
 
 function renderBasicInfo(data) {
   const container = document.getElementById('basicInfoGrid')
+  const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
   const infoCards = [
-    { label: 'ทำงานมาแล้ว', value: data.yearsWorked, unit: 'ปี', gradient: 'from-cyan-500 to-blue-500' },
+    { label: 'อายุปัจจุบัน', value: data.currentAge, unit: 'ปี', gradient: 'from-cyan-500 to-blue-500' },
+    { label: 'ทำงานมาแล้ว', value: data.yearsWorked, unit: 'ปี', gradient: 'from-indigo-500 to-violet-500' },
     { label: 'เหลือถึงเกษียณ', value: data.yearsUntilRetirement, unit: 'ปี', gradient: 'from-violet-500 to-fuchsia-500' },
     { label: 'รวมอายุงาน', value: data.totalWorkYears, unit: 'ปี', gradient: 'from-emerald-500 to-teal-500' },
-    { label: 'เงินเดือนตอนเกษียณ', value: formatNumber(data.salaryAt60), unit: 'บาท', gradient: 'from-amber-500 to-orange-500' }
+    { label: 'เงินเดือนตอนเกษียณ', value: formatNumber(data.salaryAt60), unit: 'บาท', gradient: 'from-amber-500 to-orange-500' },
+    { label: 'เกษียณเดือน', value: monthNames[data.retirementMonth - 1], unit: data.retirementYear, gradient: 'from-rose-500 to-pink-500' }
   ]
 
   container.innerHTML = infoCards.map(card => `
@@ -319,7 +342,8 @@ function updateUI() {
 // =================================
 function updateStateFromInputs() {
   state.workStartYear = Number(document.getElementById('workStartYear').value) || 0
-  state.currentAge = Number(document.getElementById('currentAge').value) || 0
+  state.birthYear = Number(document.getElementById('birthYear').value) || 0
+  state.birthMonth = Number(document.getElementById('birthMonth').value) || 1
   state.currentSalary = Number(document.getElementById('currentSalary').value) || 0
   state.bonusRate = Number(document.getElementById('bonusRate').value) || 0
   state.salaryIncreaseRate = Number(document.getElementById('salaryIncreaseRate').value) || 0
@@ -332,7 +356,8 @@ function updateStateFromInputs() {
 
 function loadStateToInputs() {
   document.getElementById('workStartYear').value = state.workStartYear || ''
-  document.getElementById('currentAge').value = state.currentAge || ''
+  document.getElementById('birthYear').value = state.birthYear || ''
+  document.getElementById('birthMonth').value = state.birthMonth || 1
   document.getElementById('currentSalary').value = state.currentSalary || ''
   document.getElementById('bonusRate').value = state.bonusRate || ''
   document.getElementById('salaryIncreaseRate').value = state.salaryIncreaseRate || ''
@@ -344,17 +369,21 @@ function loadStateToInputs() {
 function handleCalculate() {
   updateStateFromInputs()
 
-  if (state.workStartYear === 0 || state.currentAge === 0 || state.currentSalary === 0) {
-    alert('กรุณากรอกข้อมูลที่จำเป็น: ปีเริ่มงาน, อายุปัจจุบัน, และเงินเดือน')
+  if (state.workStartYear === 0 || state.birthYear === 0 || state.currentSalary === 0) {
+    alert('กรุณากรอกข้อมูลที่จำเป็น: ปีเริ่มงาน, ปี พ.ศ. เกิด, และเงินเดือน')
     return
   }
 
-  if (state.workStartYear > state.currentYear) {
+  // ตรวจสอบปีเริ่มงาน (แปลงพ.ศ. เป็นค.ศ. ก่อนเปรียบเทียบ)
+  const workStartYearAD = state.workStartYear - 543
+  if (workStartYearAD > state.currentYear) {
     alert('ปีเริ่มงานต้องไม่มากกว่าปีปัจจุบัน')
     return
   }
 
-  if (state.currentAge >= state.retirementAge) {
+  // คำนวณอายุปัจจุบันเพื่อตรวจสอบ
+  const currentAge = state.currentYear - (state.birthYear - 543)
+  if (currentAge >= state.retirementAge) {
     alert('อายุปัจจุบันต้องน้อยกว่าอายุเกษียณ (60 ปี)')
     return
   }
