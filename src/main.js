@@ -247,7 +247,7 @@ function renderBonusList(data) {
     } transition-all duration-300">
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2">
-          <span class="text-sm font-medium text-white">ปี ${item.year}</span>
+          <span class="text-sm font-medium text-white">ปี พ.ศ. ${item.year + 543} </span>
           ${item.isRetirementYear 
             ? '<span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">เกษียณ</span>' 
             : ''}
